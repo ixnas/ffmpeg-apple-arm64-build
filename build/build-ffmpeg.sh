@@ -4,7 +4,6 @@
 # $3 = tool directory
 # $4 = output directory
 # $5 = CPUs
-# $6 = FFmpeg version
 
 # load functions
 . $1/functions.sh
@@ -28,20 +27,20 @@ download_code () {
   cd "$2/${SOFTWARE}"
   checkStatus $? "change directory failed"
   # download source
-  curl -O https://ffmpeg.org/releases/ffmpeg-$6.tar.bz2
+  curl -O https://ffmpeg.org/releases/ffmpeg-snapshot.tar.bz2
   checkStatus $? "download of ${SOFTWARE} failed"
 
   # unpack ffmpeg
-  bunzip2 ffmpeg-$6.tar.bz2
-  tar -xf ffmpeg-$6.tar
-  cd "ffmpeg-$6/"
+  bunzip2 ffmpeg-snapshot.tar.bz2
+  tar -xf ffmpeg-snapshot.tar
+  cd "ffmpeg/"
   checkStatus $? "change directory failed"
 
 }
 
 configure_build () {
 
-  cd "$2/${SOFTWARE}/ffmpeg-$6/"
+  cd "$2/${SOFTWARE}/ffmpeg/"
   checkStatus $? "change directory failed"
 
   # prepare build
@@ -62,7 +61,7 @@ configure_build () {
 
 make_clean() {
 
-  cd "$2/${SOFTWARE}/ffmpeg-$6/"
+  cd "$2/${SOFTWARE}/ffmpeg/"
   checkStatus $? "change directory failed"
   make clean
   checkStatus $? "make clean for $SOFTWARE failed"
@@ -72,7 +71,7 @@ make_clean() {
 
 make_compile () {
 
-  cd "$2/${SOFTWARE}/ffmpeg-$6/"
+  cd "$2/${SOFTWARE}/ffmpeg/"
   checkStatus $? "change directory failed"
 
   # build
