@@ -63,19 +63,6 @@ fi
 echo "use ${CPUS} cpu threads"
 COMPILATION_START_TIME=$(currentTimeInSeconds)
 
-#START_TIME=$(currentTimeInSeconds)
-#echoSection "compile autoconf"
-#$SCRIPT_DIR/build-autoconf.sh "$SCRIPT_DIR" "$WORKING_DIR" "$TOOL_DIR" "$CPUS" "2.71" > "$WORKING_DIR/build-autoconf.log" 2>&1
-#checkStatus $? "build autoconf"
-#echoDurationInSections $START_TIME
-
-# start build
-#START_TIME=$(currentTimeInSeconds)
-#echoSection "compile nasm"
-#$SCRIPT_DIR/build-nasm.sh "$SCRIPT_DIR" "$WORKING_DIR" "$TOOL_DIR" "2.14.02" > "$WORKING_DIR/build-nasm.log" 2>&1
-#checkStatus $? "build nasm"
-#echoDurationInSections $START_TIME
-
 START_TIME=$(currentTimeInSeconds)
 echoSection "compile cmake"
 $SCRIPT_DIR/build-cmake.sh "$SCRIPT_DIR" "$WORKING_DIR" "$TOOL_DIR" "$CPUS" "3.20" "3.20.2" > "$WORKING_DIR/build-cmake.log" 2>&1

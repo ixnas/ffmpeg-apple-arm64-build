@@ -35,7 +35,7 @@ download_code() {
 
   # download source
   #curl -O -L https://github.com/videolan/x265/archive/$5.tar.gz
-  git clone https://github.com/videolan/x265.git
+  git clone --depth 1 https://github.com/videolan/x265.git
   checkStatus $? "download of x265 failed"
 
   # TODO: checksum validation (if available)

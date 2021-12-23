@@ -31,7 +31,7 @@ download_code () {
   cd "$2/${SOFTWARE}"
   checkStatus $? "change directory failed"
   # download source
-  git clone https://github.com/google/brotli.git 
+  git clone --depth 1 https://github.com/google/brotli.git 
   checkStatus $? "download of ${SOFTWARE} failed"
 
 }
