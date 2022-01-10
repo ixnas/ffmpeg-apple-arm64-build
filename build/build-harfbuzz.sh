@@ -31,7 +31,7 @@ download_code () {
   cd "$2/${SOFTWARE}"
   checkStatus $? "change directory failed"
   # download source
-  git clone --depth 1 https://github.com/harfbuzz/harfbuzz.git 
+  git clone --depth 1 --branch 3.2.0 https://github.com/harfbuzz/harfbuzz.git
   checkStatus $? "download of ${SOFTWARE} failed"
 
 }
