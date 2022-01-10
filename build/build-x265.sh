@@ -36,7 +36,7 @@ download_code() {
   # download source
   #curl -O -L https://github.com/videolan/x265/archive/$5.tar.gz
   #git clone https://thub.com/videolan/x265.git
-  git clone https://bitbucket.org/multicoreware/x265_git.git --depth 1 --branch stable
+  git clone https://bitbucket.org/multicoreware/x265_git.git --depth 1 --branch master
   checkStatus $? "download of x265 failed"
 
   # TODO: checksum validation (if available)
@@ -55,7 +55,8 @@ configure_build () {
 
 
   #patch for arm64 / neon recognition
-  patch -p1 < $1/apple_arm64_x265.patch
+  #patch -p1 < $1/apple_arm64_x265.patch
+  patch -p1 < $1/x265_quant.patch
 
   cd ../12bit
 
