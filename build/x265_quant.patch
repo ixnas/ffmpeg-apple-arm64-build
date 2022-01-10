@@ -1,6 +1,6 @@
-diff -ruN x265_git/source/common/aarch64/asm-primitives.cpp x265_git_working/source/common/aarch64/asm-primitives.cpp
---- x265_git/source/common/aarch64/asm-primitives.cpp	2021-10-31 15:41:00.000000000 +0000
-+++ x265_git_working/source/common/aarch64/asm-primitives.cpp	2021-10-31 15:42:43.000000000 +0000
+diff -ruN ./source/common/aarch64/asm-primitives.cpp x265_git_working/source/common/aarch64/asm-primitives.cpp
+--- ./source/common/aarch64/asm-primitives.cpp	2021-10-31 15:41:00.000000000 +0000
++++ ./source/common/aarch64/asm-primitives.cpp	2021-10-31 15:42:43.000000000 +0000
 @@ -109,10 +109,10 @@
  {
      if (cpuMask & X265_CPU_NEON)

@@ -57,12 +57,13 @@ configure_build () {
   #patch for arm64 / neon recognition
   #patch -p1 < $1/apple_arm64_x265.patch
   patch -p1 < $1/x265_quant.patch
+  patch -p1 < $1/x265_CMakeLists.patch
 
   cd ../12bit
 
   # prepare build
 
-  cmake -DCMAKE_INSTALL_PREFIX:PATH=$3 -DENABLE_SHARED=NO -DHIGH_BIT_DEPTH=ON -DEXPORT_C_API=OFF -DENABLE_CLI=OFF -DMAIN12=ON ../$GIT_DIR/source
+  cmake -DCMAKE_INSTALL_PREFIX:PATH=$3 -DENABLE_SHARED=NO -DHIGH_BIT_DEPTH=ON -DEXPORT_C_API=OFF -DENABLE_CLI=OFF -DMAIN12=ON -DX265_LATEST_TAG=ON ../$GIT_DIR/source
   checkStatus $? "configuration of 12bit x265 failed"
 
   cd ../10bit
@@ -139,10 +140,6 @@ make_compile () {
   make install
   checkStatus $? "installation of x265 failed"
 
-  # post-installation
-  # modify pkg-config file for usage with ffmpeg (it seems that the flag for threads is missing)
-  sed -i.original -e 's/lx265/lx265 -lpthread/g' $3/lib/pkgconfig/x265.pc
- 
 }
 
 
