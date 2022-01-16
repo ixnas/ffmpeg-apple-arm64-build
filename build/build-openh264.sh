@@ -3,7 +3,6 @@
 # $2 = working directory
 # $3 = tool directory
 # $4 = CPUs
-# $5 = openh264 version
 
 # load functions
 . $1/functions.sh
@@ -28,14 +27,9 @@ download_code () {
   cd "$2/${SOFTWARE}"
   checkStatus $? "change directory failed"
   # download source
-  curl -O -L https://github.com/cisco/openh264/archive/v$5.tar.gz
+  git clone --depth 1 https://github.com/cisco/openh264.git
   checkStatus $? "download of ${SOFTWARE} failed"
 
-    # unpack
-    tar -zxf "v$5.tar.gz"
-    checkStatus $? "unpack openh264 failed"
-    cd "openh264-$5/"
-    checkStatus $? "change directory failed"
 
 }
 
@@ -48,7 +42,7 @@ configure_build () {
 
 make_clean() {
 
-  cd "$2/${SOFTWARE}/openh264-$5/"
+  cd "$2/${SOFTWARE}/openh264/"
   checkStatus $? "change directory failed"
   make PREFIX="$3" clean
   checkStatus $? "make clean for $SOFTWARE failed"
@@ -58,7 +52,7 @@ make_clean() {
 
 make_compile () {
 
-  cd "$2/${SOFTWARE}/openh264-$5/"
+  cd "$2/${SOFTWARE}/openh264/"
   checkStatus $? "change directory failed"
 
   # build

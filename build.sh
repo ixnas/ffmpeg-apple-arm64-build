@@ -113,7 +113,7 @@ echoDurationInSections $START_TIME
 
 START_TIME=$(currentTimeInSeconds)
 echoSection "compile libass"
-$SCRIPT_DIR/build-libass.sh "$SCRIPT_DIR" "$WORKING_DIR" "$TOOL_DIR" "$CPUS" "0.15.1" > "$WORKING_DIR/build-libass.log" 2>&1
+$SCRIPT_DIR/build-libass.sh "$SCRIPT_DIR" "$WORKING_DIR" "$TOOL_DIR" "$CPUS" > "$WORKING_DIR/build-libass.log" 2>&1
 checkStatus $? "build libass"
 echoDurationInSections $START_TIME
 
@@ -150,7 +150,7 @@ echoDurationInSections $START_TIME
 
 START_TIME=$(currentTimeInSeconds)
 echoSection "compile openh264"
-$SCRIPT_DIR/build-openh264.sh "$SCRIPT_DIR" "$WORKING_DIR" "$TOOL_DIR" "$CPUS" "2.1.1" > "$WORKING_DIR/build-openh264.log" 2>&1
+$SCRIPT_DIR/build-openh264.sh "$SCRIPT_DIR" "$WORKING_DIR" "$TOOL_DIR" "$CPUS" > "$WORKING_DIR/build-openh264.log" 2>&1
 checkStatus $? "build openh264"
 echoDurationInSections $START_TIME
 
