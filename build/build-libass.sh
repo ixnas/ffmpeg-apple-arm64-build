@@ -3,7 +3,6 @@
 # $2 = working directory
 # $3 = tool directory
 # $4 = CPUs
-# $5 = vorbis version - unised get heads from git
 
 # load functions
 . $1/functions.sh
@@ -27,19 +26,17 @@ download_code () {
   cd "$2/${SOFTWARE}"
   checkStatus $? "change directory failed"
   # download source
-  curl -O -L https://github.com/libass/libass/releases/download/0.15.1/libass-$5.tar.xz 
-  checkStatus $? "download of ${SOFTWARE} failed"
-
-  tar xf "libass-$5.tar.xz"
+  git clone --depth 1 https://github.com/libass/libass.git
   checkStatus $? "download of ${SOFTWARE} failed"
 }
 
 configure_build () {
 
-  cd "$2/${SOFTWARE}/${SOFTWARE}-$5"
+  cd "$2/${SOFTWARE}/libass"
   checkStatus $? "change directory failed"
 
   # prepare build
+  ./autogen.sh
   LDFLAGS="-L$3/lib -lc++ -lpng -lbz2 -lz -lbrotlidec-static -lbrotlicommon-static"  ./configure --prefix="$3" --enable-static --disable-shared --disable-fontconfig --disable-dependency-tracking
   checkStatus $? "configuration of ${SOFTWARE} failed"
 
@@ -47,7 +44,7 @@ configure_build () {
 
 make_clean() {
 
-  cd "$2/${SOFTWARE}/${SOFTWARE}-$5/"
+  cd "$2/${SOFTWARE}/libass/"
   checkStatus $? "change directory failed"
   make clean
 
@@ -55,7 +52,7 @@ make_clean() {
 
 make_compile () {
 
-  cd "$2/${SOFTWARE}/${SOFTWARE}-$5/"
+  cd "$2/${SOFTWARE}/libass/"
   checkStatus $? "change directory failed"
 
   # build
