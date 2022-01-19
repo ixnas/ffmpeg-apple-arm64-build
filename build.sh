@@ -185,6 +185,12 @@ checkStatus $? "build soxr"
 echoDurationInSections $START_TIME
 
 START_TIME=$(currentTimeInSeconds)
+echoSection "compile openjpeg"
+$SCRIPT_DIR/build-openjpeg.sh "$SCRIPT_DIR" "$WORKING_DIR" "$TOOL_DIR" "$CPUS" > "$WORKING_DIR/build-openjpeg.log" 2>&1
+checkStatus $? "build openjpeg"
+echoDurationInSections $START_TIME
+
+START_TIME=$(currentTimeInSeconds)
 echoSection "compile ffmpeg"
 $SCRIPT_DIR/build-ffmpeg.sh "$SCRIPT_DIR" "$WORKING_DIR" "$TOOL_DIR" "$OUT_DIR" "$CPUS" > "$WORKING_DIR/build-ffmpeg.log" 2>&1
 checkStatus $? "build ffmpeg"
@@ -196,7 +202,7 @@ echoDurationInSections $COMPILATION_START_TIME
 echoSection "bundle result"
 cd "$OUT_DIR/bin/"
 checkStatus $? "change directory"
-zip -9 -r "$WORKING_DIR/ffmpeg-success.zip" *
+zip -9 -r "$WORKING_DIR/ffmpeg-success.zip" ff*
 
 echoSection "run tests"
 $TEST_DIR/test.sh "$SCRIPT_DIR" "$TEST_DIR" "$WORKING_DIR" "$OUT_DIR" > "$WORKING_DIR/test.log" 2>&1

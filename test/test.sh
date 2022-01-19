@@ -104,3 +104,10 @@ echoSection "run test soxr resampling"
 $4/bin/ffmpeg -y -i "$2/test.mp4" -af "aresample=resampler=soxr" -ar 44100 -c:a "pcm_s16le" -vn "$3/test-soxr.wav" > "$3/test-soxr.log" 2>&1
 checkStatus $? "test soxr"
 echoDurationInSections $START_TIME
+
+# test openjpeg
+START_TIME=$(currentTimeInSeconds)
+echoSection "run test openjpeg encoding"
+$4/bin/ffmpeg -y -i "$2/test.mp4" -an -c:v "libopenjpeg" "$3/test-openjpeg.mp4" > "$3/test-openjpeg.log" 2>&1
+checkStatus $? "test openjpeg"
+echoDurationInSections $START_TIME
