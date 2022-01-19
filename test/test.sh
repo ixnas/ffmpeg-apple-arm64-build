@@ -97,3 +97,10 @@ echoSection "run test vorbis encoding"
 $4/bin/ffmpeg -y -i "$2/test.mp4" -c:a "libvorbis" -vn "$3/test-vorbis.ogg" > "$3/test-vorbis.log" 2>&1
 checkStatus $? "test vorbis"
 echoDurationInSections $START_TIME
+
+# test soxr
+START_TIME=$(currentTimeInSeconds)
+echoSection "run test soxr resampling"
+$4/bin/ffmpeg -y -i "$2/test.mp4" -af "aresample=resampler=soxr" -ar 44100 -c:a "pcm_s16le" -vn "$3/test-soxr.wav" > "$3/test-soxr.log" 2>&1
+checkStatus $? "test soxr"
+echoDurationInSections $START_TIME
