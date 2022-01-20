@@ -23,15 +23,13 @@ make_directories() {
 
 download_code () {
 
-curl -o x264-master.tar.gz -O -L https://github.com/mirror/x264/archive/master.tar.gz
+  git clone --depth 1 https://github.com/mirror/x264.git
   checkStatus $? "download of x264 failed"
 
 # TODO: checksum validation (if available)
 
 # unpack
-  tar -zxf "x264-master.tar.gz"
-  checkStatus $? "unpack x264 failed"
-  cd "x264-master/"
+  cd "x264/"
   checkStatus $? "change directory failed"
 
 
@@ -39,7 +37,7 @@ curl -o x264-master.tar.gz -O -L https://github.com/mirror/x264/archive/master.t
 
 configure_build () {
 
-  cd "$2/${SOFTWARE}/x264-master/"
+  cd "$2/${SOFTWARE}/x264/"
   checkStatus $? "change directory failed"
 
   # prepare build
@@ -50,7 +48,7 @@ configure_build () {
 
 make_clean() {
 
-  cd "$2/${SOFTWARE}/x264-master/"
+  cd "$2/${SOFTWARE}/x264/"
   checkStatus $? "change directory failed"
   make clean
   checkStatus $? "make clean for $SOFTWARE failed"
@@ -59,7 +57,7 @@ make_clean() {
 
 make_compile () {
 
-  cd "$2/${SOFTWARE}/x264-master/"
+  cd "$2/${SOFTWARE}/x264/"
   checkStatus $? "change directory failed"
 
   # build
