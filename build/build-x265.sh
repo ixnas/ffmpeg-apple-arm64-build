@@ -54,11 +54,8 @@ configure_build () {
   checkStatus $? "change directory failed"
 
 
-  #patch for arm64 / neon recognition
-  patch -p1 < $1/x265_quant.patch
-
-  #patch to force CMake to generate pkg-config entries
-  patch -p1 < $1/x265_CMakeLists.patch
+  # patches for arm64 / neon recognition and forcing pkgconfig entry generation
+  patch -p1 < $1/patches/x265.patch
 
   cd ../12bit
 
