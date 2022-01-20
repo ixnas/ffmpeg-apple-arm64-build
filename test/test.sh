@@ -118,3 +118,10 @@ echoSection "run test avisynth+ input"
 $4/bin/ffmpeg -y -t 00:00:10 -i "$2/test.avs" -c:a ac3 -c:v mpeg4 "$3/test-avisynthplus.mp4" > "$3/test-avisynthplus.log" 2>&1
 checkStatus $? "test avisynthplus"
 echoDurationInSections $START_TIME
+
+# test xvid
+START_TIME=$(currentTimeInSeconds)
+echoSection "run test xvid encoding"
+$4/bin/ffmpeg -y -i "$2/test.mp4" -c:v "libxvid" -an "$3/test-xvid.avi" > "$3/test-xvid.log" 2>&1
+checkStatus $? "test xvid"
+echoDurationInSections $START_TIME

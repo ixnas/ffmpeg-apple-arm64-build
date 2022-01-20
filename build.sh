@@ -82,6 +82,18 @@ checkStatus $? "build autoconf"
 echoDurationInSections $START_TIME
 
 START_TIME=$(currentTimeInSeconds)
+echoSection "compile automake"
+$SCRIPT_DIR/build-automake.sh "$SCRIPT_DIR" "$WORKING_DIR" "$TOOL_DIR" "$CPUS" "1.16.5" > "$WORKING_DIR/build-automake.log" 2>&1
+checkStatus $? "build automake"
+echoDurationInSections $START_TIME
+
+START_TIME=$(currentTimeInSeconds)
+echoSection "compile libtool"
+$SCRIPT_DIR/build-libtool.sh "$SCRIPT_DIR" "$WORKING_DIR" "$TOOL_DIR" "$CPUS" "2.4.6" > "$WORKING_DIR/build-libtool.log" 2>&1
+checkStatus $? "build libtool"
+echoDurationInSections $START_TIME
+
+START_TIME=$(currentTimeInSeconds)
 echoSection "compile FriBidi"
 $SCRIPT_DIR/build-fribidi.sh "$SCRIPT_DIR" "$WORKING_DIR" "$TOOL_DIR" "$CPUS" "1.0.10" > "$WORKING_DIR/build-fribidi.log" 2>&1
 checkStatus $? "build FriBidi"
@@ -200,6 +212,12 @@ START_TIME=$(currentTimeInSeconds)
 echoSection "compile avisynth+"
 $SCRIPT_DIR/build-avisynthplus.sh "$SCRIPT_DIR" "$WORKING_DIR" "$TOOL_DIR" "$CPUS" > "$WORKING_DIR/build-avisynthplus.log" 2>&1
 checkStatus $? "build avisynthplus"
+echoDurationInSections $START_TIME
+
+START_TIME=$(currentTimeInSeconds)
+echoSection "compile xvid"
+$SCRIPT_DIR/build-xvid.sh "$SCRIPT_DIR" "$WORKING_DIR" "$TOOL_DIR" "$CPUS" "1.3.7" > "$WORKING_DIR/build-xvid.log" 2>&1
+checkStatus $? "build xvid"
 echoDurationInSections $START_TIME
 
 START_TIME=$(currentTimeInSeconds)

@@ -3,11 +3,12 @@
 # $2 = working directory
 # $3 = tool directory
 # $4 = CPUs
+# $5 = version
 
 # load functions
 . $1/functions.sh
 
-SOFTWARE=libass
+SOFTWARE=xvid
 
 make_directories() {
 
@@ -26,25 +27,30 @@ download_code () {
   cd "$2/${SOFTWARE}"
   checkStatus $? "change directory failed"
   # download source
-  git clone --depth 1 https://github.com/libass/libass.git
+  curl -O -L http://downloads.xvid.org/downloads/xvid_latest.tar.gz
   checkStatus $? "download of ${SOFTWARE} failed"
+
+  tar zxf xvid_latest.tar.gz
+  checkStatus $? "extraction of ${SOFTWARE} failed"
+
+  rm xvid_latest.tar.gz
 }
 
 configure_build () {
 
-  cd "$2/${SOFTWARE}/libass"
+  cd $2/${SOFTWARE}/xvid_*/trunk/xvidcore/build/generic
   checkStatus $? "change directory failed"
 
   # prepare build
-  ./autogen.sh
-  LDFLAGS="-L$3/lib -lc++ -lpng -lbz2 -lz -lbrotlidec-static -lbrotlicommon-static"  ./configure --prefix="$3" --disable-fontconfig --disable-dependency-tracking
+  ./bootstrap.sh
+  ./configure --prefix=$3
   checkStatus $? "configuration of ${SOFTWARE} failed"
 
 }
 
 make_clean() {
 
-  cd "$2/${SOFTWARE}/libass/"
+  cd $2/${SOFTWARE}/xvid_*/trunk/xvidcore/build/generic
   checkStatus $? "change directory failed"
   make clean
 
@@ -52,7 +58,7 @@ make_clean() {
 
 make_compile () {
 
-  cd "$2/${SOFTWARE}/libass/"
+  cd $2/${SOFTWARE}/xvid_*/trunk/xvidcore/build/generic
   checkStatus $? "change directory failed"
 
   # build

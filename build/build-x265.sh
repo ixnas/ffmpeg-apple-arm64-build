@@ -131,7 +131,7 @@ make_compile () {
   ln -sf ../12bit/libx265.a libx265_main12.a
 
   mv libx265.a libx265_main.a
-  libtool -static -o libx265.a libx265_main.a libx265_main10.a libx265_main12.a 2>/dev/null
+  /usr/bin/libtool -static -o libx265.a libx265_main.a libx265_main10.a libx265_main12.a 2>/dev/null
   checkStatus $? "merge of x265 objects failed"
 
   # install

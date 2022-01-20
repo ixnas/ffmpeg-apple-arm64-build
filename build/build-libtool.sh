@@ -2,13 +2,13 @@
 # $1 = script directory
 # $2 = working directory
 # $3 = tool directory
-# $4 = output directory
-# $5 = CPUs
+# $4 = CPUs
+# $5 = version
 
 # load functions
 . $1/functions.sh
 
-SOFTWARE=ffmpeg
+SOFTWARE=libtool
 
 make_directories() {
 
@@ -27,45 +27,31 @@ download_code () {
   cd "$2/${SOFTWARE}"
   checkStatus $? "change directory failed"
   # download source
-  curl -O https://ffmpeg.org/releases/ffmpeg-snapshot.tar.bz2
+  curl -O -L https://ftpmirror.gnu.org/libtool/libtool-$5.tar.gz
   checkStatus $? "download of ${SOFTWARE} failed"
 
-  # unpack ffmpeg
-  bunzip2 ffmpeg-snapshot.tar.bz2
-  tar -xf ffmpeg-snapshot.tar
-  cd "ffmpeg/"
+  # unpack
+  tar -zxf "libtool-$5.tar.gz"
+  checkStatus $? "unpack libtool failed"
+  cd "libtool-$5/"
   checkStatus $? "change directory failed"
 
 }
 
 configure_build () {
 
-  cd "$2/${SOFTWARE}/ffmpeg/"
+  cd "$2/${SOFTWARE}/libtool-$5/"
   checkStatus $? "change directory failed"
 
-  patch -p1 < $1/patches/ffmpeg.patch
-  checkStatus $? "patch failed"
-
   # prepare build
-  FF_FLAGS="-L${3}/lib -I${3}/include"
-  export LDFLAGS="$FF_FLAGS"
-  export CFLAGS="$FF_FLAGS"
-  
-  # --pkg-config-flags="--static" is required to respect the Libs.private flags of the *.pc files
-  ./configure --prefix="$4" --enable-gpl --pkg-config-flags="--static"   --pkg-config=$3/bin/pkg-config \
-      --enable-libaom --enable-libopenh264 --enable-libx264 --enable-libx265 --enable-libvpx \
-      --enable-libmp3lame --enable-libopus --enable-neon --enable-runtime-cpudetect \
-      --enable-audiotoolbox --enable-videotoolbox --enable-libvorbis --enable-libsvtav1 \
-      --enable-libass --enable-lto --enable-opencl --enable-libsoxr --enable-libopenjpeg \
-      --enable-avisynth --enable-libxvid
-
+  ./configure --prefix="$3" 
   checkStatus $? "configuration of ${SOFTWARE} failed"
 
 }
 
 make_clean() {
 
-  cd "$2/${SOFTWARE}/ffmpeg/"
+  cd "$2/${SOFTWARE}/libtool-$5/"
   checkStatus $? "change directory failed"
   make clean
   checkStatus $? "make clean for $SOFTWARE failed"
@@ -75,11 +61,11 @@ make_clean() {
 
 make_compile () {
 
-  cd "$2/${SOFTWARE}/ffmpeg/"
+  cd "$2/${SOFTWARE}/libtool-$5/"
   checkStatus $? "change directory failed"
 
   # build
-  make -j $5
+  make -j $4
   checkStatus $? "build of ${SOFTWARE} failed"
 
   # install
@@ -90,8 +76,15 @@ make_compile () {
 
 build_main () {
 
+  if [[ -d "$2/${SOFTWARE}" && "${ACTION}" == "skip" ]]
+  then
+      return 0
+  elif [[ -d "$2/${SOFTWARE}" && -z "${ACTION}" ]]
+  then
+      echo "${SOFTWARE} build directory already exists but no action set. Exiting script"
+      exit 0
+  fi
 
-  # ffmpeg we always want to rebuild
 
   if [[ ! -d "$2/${SOFTWARE}" ]]
   then
