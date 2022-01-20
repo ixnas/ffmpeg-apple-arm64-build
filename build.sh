@@ -191,6 +191,12 @@ checkStatus $? "build openjpeg"
 echoDurationInSections $START_TIME
 
 START_TIME=$(currentTimeInSeconds)
+echoSection "compile avisynth+"
+$SCRIPT_DIR/build-avisynthplus.sh "$SCRIPT_DIR" "$WORKING_DIR" "$TOOL_DIR" "$CPUS" > "$WORKING_DIR/build-avisynthplus.log" 2>&1
+checkStatus $? "build avisynthplus"
+echoDurationInSections $START_TIME
+
+START_TIME=$(currentTimeInSeconds)
 echoSection "compile ffmpeg"
 $SCRIPT_DIR/build-ffmpeg.sh "$SCRIPT_DIR" "$WORKING_DIR" "$TOOL_DIR" "$OUT_DIR" "$CPUS" > "$WORKING_DIR/build-ffmpeg.log" 2>&1
 checkStatus $? "build ffmpeg"

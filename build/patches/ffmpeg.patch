@@ -1,0 +1,264 @@
+--- ./configure	2022-01-18 18:20:04.000000000 +0100
++++ ./configure	2022-01-20 15:35:21.000000000 +0100
+@@ -6501,7 +6501,7 @@
+ done
+ 
+ # these are off by default, so fail if requested and not available
+-enabled avisynth          && require_headers "avisynth/avisynth_c.h"
++enabled avisynth          && require_pkg_config avisynth "avisynth >= 3.7.0" "avisynth/avisynth_c.h" avs_get_version
+ enabled cuda_nvcc         && { check_nvcc cuda_nvcc || die "ERROR: failed checking for nvcc."; }
+ enabled chromaprint       && require chromaprint chromaprint.h chromaprint_get_version -lchromaprint
+ enabled decklink          && { require_headers DeckLinkAPI.h &&
+--- ./libavformat/avisynth.c	2021-04-28 18:20:05.000000000 +0200
++++ ./libavformat/avisynth.c	2022-01-20 16:01:11.000000000 +0100
+@@ -28,6 +28,7 @@
+ #include "internal.h"
+ #include "config.h"
+ 
++#if 0
+ /* Enable function pointer definitions for runtime loading. */
+ #define AVSC_NO_DECLSPEC
+ 
+@@ -41,6 +42,7 @@
+   #define AVISYNTH_NAME "libavisynth"
+   #define AVISYNTH_LIB AVISYNTH_NAME SLIBSUF
+ #endif
++#endif
+ 
+ /* Endianness guards for audio */
+ #if HAVE_BIGENDIAN
+@@ -51,6 +53,7 @@
+ 
+ #include <avisynth/avisynth_c.h>
+ 
++#if 0
+ typedef struct AviSynthLibrary {
+     void *library;
+ #define AVSC_DECLARE_FUNC(name) name ## _func name
+@@ -78,6 +81,7 @@
+     AVSC_DECLARE_FUNC(avs_is_planar_rgba);
+ #undef AVSC_DECLARE_FUNC
+ } AviSynthLibrary;
++#endif
+ 
+ typedef struct AviSynthContext {
+     AVS_ScriptEnvironment *env;
+@@ -109,6 +113,7 @@
+ static const int avs_planes_rgba[4]   = { AVS_PLANAR_G, AVS_PLANAR_B,
+                                           AVS_PLANAR_R, AVS_PLANAR_A };
+ 
++#if 0
+ /* A conflict between C++ global objects, atexit, and dynamic loading requires
+  * us to register our own atexit handler to prevent double freeing. */
+ static AviSynthLibrary avs_library;
+@@ -121,14 +126,14 @@
+ 
+ static av_cold int avisynth_load_library(void)
+ {
+-    avs_library.library = dlopen(AVISYNTH_LIB, RTLD_NOW | RTLD_LOCAL);
+-    if (!avs_library.library)
++    library = dlopen(AVISYNTH_LIB, RTLD_NOW | RTLD_LOCAL);
++    if (!library)
+         return AVERROR_UNKNOWN;
+ 
+ #define LOAD_AVS_FUNC(name, continue_on_fail)                          \
+-        avs_library.name = (name ## _func)                             \
+-                           dlsym(avs_library.library, #name);          \
+-        if (!continue_on_fail && !avs_library.name)                    \
++        name = (name ## _func)                             \
++                           dlsym(library, #name);          \
++        if (!continue_on_fail && !name)                    \
+             goto fail;
+ 
+     LOAD_AVS_FUNC(avs_bit_blt, 0);
+@@ -159,9 +164,10 @@
+     return 0;
+ 
+ fail:
+-    dlclose(avs_library.library);
++    dlclose(library);
+     return AVERROR_UNKNOWN;
+ }
++#endif
+ 
+ /* Note that avisynth_context_create and avisynth_context_destroy
+  * do not allocate or free the actual context! That is taken care of
+@@ -171,31 +177,36 @@
+     AviSynthContext *avs = s->priv_data;
+     int ret;
+ 
+-    if (!avs_library.library)
++#if 0
++    if (!library)
+         if (ret = avisynth_load_library())
+             return ret;
++#endif
+ 
+-    avs->env = avs_library.avs_create_script_environment(3);
+-    if (avs_library.avs_get_error) {
+-        const char *error = avs_library.avs_get_error(avs->env);
++    avs->env = avs_create_script_environment(3);
++    if (avs_get_error) {
++        const char *error = avs_get_error(avs->env);
+         if (error) {
+             av_log(s, AV_LOG_ERROR, "%s\n", error);
+             return AVERROR_UNKNOWN;
+         }
+     }
+ 
++#if 0
+     if (!avs_ctx_list) {
+         avs_ctx_list = avs;
+     } else {
+         avs->next    = avs_ctx_list;
+         avs_ctx_list = avs;
+     }
++#endif
+ 
+     return 0;
+ }
+ 
+ static av_cold void avisynth_context_destroy(AviSynthContext *avs)
+ {
++#if 0
+     if (avs_atexit_called)
+         return;
+ 
+@@ -207,17 +218,19 @@
+             prev = prev->next;
+         prev->next = avs->next;
+     }
++#endif
+ 
+     if (avs->clip) {
+-        avs_library.avs_release_clip(avs->clip);
++        avs_release_clip(avs->clip);
+         avs->clip = NULL;
+     }
+     if (avs->env) {
+-        avs_library.avs_delete_script_environment(avs->env);
++        avs_delete_script_environment(avs->env);
+         avs->env = NULL;
+     }
+ }
+ 
++#if 0
+ static av_cold void avisynth_atexit_handler(void)
+ {
+     AviSynthContext *avs = avs_ctx_list;
+@@ -227,10 +240,11 @@
+         avisynth_context_destroy(avs);
+         avs = next;
+     }
+-    dlclose(avs_library.library);
++    dlclose(library);
+ 
+     avs_atexit_called = 1;
+ }
++#endif
+ 
+ /* Create AVStream from audio and video data. */
+ static int avisynth_create_stream_video(AVFormatContext *s, AVStream *st)
+@@ -588,7 +602,7 @@
+ #else
+     arg = avs_new_value_string(s->url);
+ #endif
+-    val = avs_library.avs_invoke(avs->env, "Import", arg, 0);
++    val = avs_invoke(avs->env, "Import", arg, 0);
+     if (avs_is_error(val)) {
+         av_log(s, AV_LOG_ERROR, "%s\n", avs_as_error(val));
+         ret = AVERROR_UNKNOWN;
+@@ -600,14 +614,14 @@
+         goto fail;
+     }
+ 
+-    avs->clip = avs_library.avs_take_clip(val, avs->env);
+-    avs->vi   = avs_library.avs_get_video_info(avs->clip);
++    avs->clip = avs_take_clip(val, avs->env);
++    avs->vi   = avs_get_video_info(avs->clip);
+ 
+     /* On Windows, FFmpeg supports AviSynth interface version 6 or higher.
+      * This includes AviSynth 2.6 RC1 or higher, and AviSynth+ r1718 or higher,
+      * and excludes 2.5 and the 2.6 alphas. */
+ 
+-    if (avs_library.avs_get_version(avs->clip) < 6) {
++    if (avs_get_version(avs->clip) < 6) {
+         av_log(s, AV_LOG_ERROR,
+                "AviSynth version is too old. Please upgrade to either AviSynth 2.6 >= RC1 or AviSynth+ >= r1718.\n");
+         ret = AVERROR_UNKNOWN;
+@@ -615,7 +629,7 @@
+     }
+ 
+     /* Release the AVS_Value as it will go out of scope. */
+-    avs_library.avs_release_value(val);
++    avs_release_value(val);
+ 
+     if (ret = avisynth_create_stream(s))
+         goto fail;
+@@ -663,7 +677,7 @@
+     if (discard)
+         return 0;
+ 
+-    bits = avs_library.avs_bits_per_pixel(avs->vi);
++    bits = avs_bits_per_pixel(avs->vi);
+ 
+     /* Without the cast to int64_t, calculation overflows at about 9k x 9k
+      * resolution. */
+@@ -680,8 +694,8 @@
+     pkt->duration = 1;
+     pkt->stream_index = avs->curr_stream;
+ 
+-    frame = avs_library.avs_get_frame(avs->clip, n);
+-    error = avs_library.avs_clip_get_error(avs->clip);
++    frame = avs_get_frame(avs->clip, n);
++    error = avs_clip_get_error(avs->clip);
+     if (error) {
+         av_log(s, AV_LOG_ERROR, "%s\n", error);
+         avs->error = 1;
+@@ -692,26 +706,26 @@
+     dst_p = pkt->data;
+     for (i = 0; i < avs->n_planes; i++) {
+         plane = avs->planes[i];
+-        src_p = avs_library.avs_get_read_ptr_p(frame, plane);
+-        pitch = avs_library.avs_get_pitch_p(frame, plane);
++        src_p = avs_get_read_ptr_p(frame, plane);
++        pitch = avs_get_pitch_p(frame, plane);
+ 
+-        rowsize     = avs_library.avs_get_row_size_p(frame, plane);
+-        planeheight = avs_library.avs_get_height_p(frame, plane);
++        rowsize     = avs_get_row_size_p(frame, plane);
++        planeheight = avs_get_height_p(frame, plane);
+ 
+         /* Flip RGB video. */
+-        if (avs_library.avs_is_color_space(avs->vi, AVS_CS_BGR)   ||
+-            avs_library.avs_is_color_space(avs->vi, AVS_CS_BGR48) ||
+-            avs_library.avs_is_color_space(avs->vi, AVS_CS_BGR64)) {
++        if (avs_is_color_space(avs->vi, AVS_CS_BGR)   ||
++            avs_is_color_space(avs->vi, AVS_CS_BGR48) ||
++            avs_is_color_space(avs->vi, AVS_CS_BGR64)) {
+             src_p = src_p + (planeheight - 1) * pitch;
+             pitch = -pitch;
+         }
+ 
+-        avs_library.avs_bit_blt(avs->env, dst_p, rowsize, src_p, pitch,
++        avs_bit_blt(avs->env, dst_p, rowsize, src_p, pitch,
+                                  rowsize, planeheight);
+         dst_p += rowsize * planeheight;
+     }
+ 
+-    avs_library.avs_release_video_frame(frame);
++    avs_release_video_frame(frame);
+     return 0;
+ }
+ 
+@@ -771,8 +785,8 @@
+     pkt->duration = samples;
+     pkt->stream_index = avs->curr_stream;
+ 
+-    avs_library.avs_get_audio(avs->clip, pkt->data, n, samples);
+-    error = avs_library.avs_clip_get_error(avs->clip);
++    avs_get_audio(avs->clip, pkt->data, n, samples);
++    error = avs_clip_get_error(avs->clip);
+     if (error) {
+         av_log(s, AV_LOG_ERROR, "%s\n", error);
+         avs->error = 1;--- ../../tool/lib/pkgconfig/avisynth.pc	2022-01-20 15:53:56.000000000 +0100
