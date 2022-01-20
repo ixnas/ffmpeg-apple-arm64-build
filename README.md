@@ -1,12 +1,7 @@
 # FFmpeg
-This script is made to compile FFmpeg with common codecs on Mac OSX running on Apple Silicon.
-The script was orginally taken from https://gitlab.com/martinr92/ffmpeg and has been modifed to build
-the libraries with ARM64/NEON code were applicable.
+This project is a fork of [Vargol](https://github.com/Vargol/ffmpeg-apple-arm64-build)'s build script, which he had originally taken from https://gitlab.com/martinr92/ffmpeg. This fork aims to produce the latest development snapshot of FFmpeg and external libraries. The end goal is to build FFmpeg binaries for Apple Silicon that are as fully featured as the Intel builds from [evermeet](https://evermeet.cx/ffmpeg/).
 
-The version of x265 also includes the Apple provided patch used by Handbreak, 
-https://github.com/HandBrake/HandBrake/blob/master/contrib/x265/A01-darwin-neon-support-for-arm64.patch
-forward ported to apply to newer versions of x265 this is not in the main line code but runs significantly faster.
-This version also correctly reports that ARM64 is 64 bit not 32 bit :-)
+The version of x265 is built from the master branch. That branch already has the NEON support patch by Apple built in, so there's no need to patch it manually.
 
 ## Result
 This repository builds FFmpeg and FFprobe for Mac OSX using
@@ -20,10 +15,13 @@ This repository builds FFmpeg and FFprobe for Mac OSX using
     - [x264](http://www.videolan.org/developers/x264.html) for H.264 encoding
     - [x265](http://x265.org/) for H.265/HEVC encoding
     - [vpx](https://www.webmproject.org/) for VP8/VP9 de-/encoding
+    - [openjpeg](https://openjpeg.org/) for Motion JPEG2000 de-/encoding
 - audio codecs
     - [LAME](http://lame.sourceforge.net/) for MP3 encoding
     - [opus](https://opus-codec.org/) for Opus de-/encoding
     - [vorbis](https://www.xiph.org) for Vorbis de-/encoding
+- filters
+    - [soxr](https://sourceforge.net/projects/soxr/) for audio resampling
 
 To get a full list of all formats and codecs that are supported just execute
 ```
