@@ -22,6 +22,8 @@ This repository builds FFmpeg and FFprobe for Mac OSX using
     - [vorbis](https://www.xiph.org) for Vorbis de-/encoding
 - filters
     - [soxr](https://sourceforge.net/projects/soxr/) for audio resampling
+- formats
+    - [avisynth+](https://github.com/AviSynth/AviSynthPlus) for AviSynth scripts
 
 To get a full list of all formats and codecs that are supported just execute
 ```
