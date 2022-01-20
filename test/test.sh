@@ -115,6 +115,6 @@ echoDurationInSections $START_TIME
 # test avisynth+
 START_TIME=$(currentTimeInSeconds)
 echoSection "run test avisynth+ input"
-$4/bin/ffmpeg -y -i "$2/test.avs" -an "$3/test-avisynthplus.mp4" > "$3/test-avisynthplus.log" 2>&1
+$4/bin/ffmpeg -y -t 00:00:10 -i "$2/test.avs" -c:a ac3 -c:v mpeg4 "$3/test-avisynthplus.mp4" > "$3/test-avisynthplus.log" 2>&1
 checkStatus $? "test avisynthplus"
 echoDurationInSections $START_TIME

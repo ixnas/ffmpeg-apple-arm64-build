@@ -68,6 +68,10 @@ make_compile () {
   make install
   checkStatus $? "installation of ${SOFTWARE} failed"
 
+  # patch
+  cd "$2"
+  patch -p1 < $1/patches/avisynthplus.patch
+  checkStatus $? "patching of ${SOFTWARE} failed"
 }
 
 build_main () {

@@ -43,6 +43,9 @@ configure_build () {
   cd "$2/${SOFTWARE}/ffmpeg/"
   checkStatus $? "change directory failed"
 
+  patch -p1 < $1/patches/ffmpeg.patch
+  checkStatus $? "patch failed"
+
   # prepare build
   FF_FLAGS="-L${3}/lib -I${3}/include"
   export LDFLAGS="$FF_FLAGS"
