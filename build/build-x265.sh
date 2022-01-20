@@ -55,8 +55,9 @@ configure_build () {
 
 
   #patch for arm64 / neon recognition
-  #patch -p1 < $1/apple_arm64_x265.patch
   patch -p1 < $1/x265_quant.patch
+
+  #patch to force CMake to generate pkg-config entries
   patch -p1 < $1/x265_CMakeLists.patch
 
   cd ../12bit
