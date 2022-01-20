@@ -76,6 +76,12 @@ checkStatus $? "build pkg-config"
 echoDurationInSections $START_TIME
 
 START_TIME=$(currentTimeInSeconds)
+echoSection "compile autoconf"
+$SCRIPT_DIR/build-autoconf.sh "$SCRIPT_DIR" "$WORKING_DIR" "$TOOL_DIR" "$CPUS" "2.71" > "$WORKING_DIR/build-autoconf.log" 2>&1
+checkStatus $? "build autoconf"
+echoDurationInSections $START_TIME
+
+START_TIME=$(currentTimeInSeconds)
 echoSection "compile FriBidi"
 $SCRIPT_DIR/build-fribidi.sh "$SCRIPT_DIR" "$WORKING_DIR" "$TOOL_DIR" "$CPUS" "1.0.10" > "$WORKING_DIR/build-fribidi.log" 2>&1
 checkStatus $? "build FriBidi"
@@ -120,7 +126,7 @@ echoDurationInSections $START_TIME
 
 START_TIME=$(currentTimeInSeconds)
 echoSection "compile x265"
-$SCRIPT_DIR/build-x265.sh "$SCRIPT_DIR" "$WORKING_DIR" "$TOOL_DIR" "$CPUS" "3.4" > "$WORKING_DIR/build-x265.log" 2>&1
+$SCRIPT_DIR/build-x265.sh "$SCRIPT_DIR" "$WORKING_DIR" "$TOOL_DIR" "$CPUS" "xxxx" > "$WORKING_DIR/build-x265.log" 2>&1
 checkStatus $? "build x265"
 echoDurationInSections $START_TIME
 
@@ -144,7 +150,7 @@ echoDurationInSections $START_TIME
 
 START_TIME=$(currentTimeInSeconds)
 echoSection "compile aom"
-$SCRIPT_DIR/build-aom.sh "$SCRIPT_DIR" "$WORKING_DIR" "$TOOL_DIR" "$CPUS" "2.0.0" > "$WORKING_DIR/build-aom.log" 2>&1
+$SCRIPT_DIR/build-aom.sh "$SCRIPT_DIR" "$WORKING_DIR" "$TOOL_DIR" "$CPUS" "xxxx" > "$WORKING_DIR/build-aom.log" 2>&1
 checkStatus $? "build aom"
 echoDurationInSections $START_TIME
 
@@ -162,7 +168,7 @@ echoDurationInSections $START_TIME
 
 START_TIME=$(currentTimeInSeconds)
 echoSection "compile vpx"
-$SCRIPT_DIR/build-vpx.sh "$SCRIPT_DIR" "$WORKING_DIR" "$TOOL_DIR" "$CPUS" "1.9.0" > "$WORKING_DIR/build-vpx.log" 2>&1
+$SCRIPT_DIR/build-vpx.sh "$SCRIPT_DIR" "$WORKING_DIR" "$TOOL_DIR" "$CPUS" "xxxx" > "$WORKING_DIR/build-vpx.log" 2>&1
 checkStatus $? "build vpx"
 echoDurationInSections $START_TIME
 
