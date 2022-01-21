@@ -37,7 +37,7 @@ configure_build () {
 
   # prepare build
   ./autogen.sh
-  LDFLAGS="-L$3/lib -lc++ -lpng -lbz2 -lz -lbrotlidec-static -lbrotlicommon-static"  ./configure --prefix="$3" --disable-fontconfig --disable-dependency-tracking
+  LDFLAGS="-L$3/lib -lc++ -lpng -lbz2 -lz -lbrotlidec-static -lbrotlicommon-static"  ./configure --prefix="$3" --enable-static --disable-shared --disable-fontconfig --disable-dependency-tracking
   checkStatus $? "configuration of ${SOFTWARE} failed"
 
 }

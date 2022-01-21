@@ -16,6 +16,7 @@ This repository builds FFmpeg and FFprobe for Mac OSX using
     - [x265](http://x265.org/) for H.265/HEVC encoding
     - [vpx](https://www.webmproject.org/) for VP8/VP9 de-/encoding
     - [openjpeg](https://openjpeg.org/) for Motion JPEG2000 de-/encoding
+    - [xvid](https://www.xvid.com) for Xvid encoding
 - audio codecs
     - [LAME](http://lame.sourceforge.net/) for MP3 encoding
     - [opus](https://opus-codec.org/) for Opus de-/encoding
