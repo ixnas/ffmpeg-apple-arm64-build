@@ -11,6 +11,8 @@
  enabled cuda_nvcc         && { check_nvcc cuda_nvcc || die "ERROR: failed checking for nvcc."; }
  enabled chromaprint       && require chromaprint chromaprint.h chromaprint_get_version -lchromaprint
  enabled decklink          && { require_headers DeckLinkAPI.h &&
+--- ./libavformat/avisynth.c	2021-04-28 18:20:05.000000000 +0200
++++ ./libavformat/avisynth.c	2022-01-20 16:01:11.000000000 +0100
 @@ -28,6 +28,7 @@
  #include "internal.h"
  #include "config.h"
