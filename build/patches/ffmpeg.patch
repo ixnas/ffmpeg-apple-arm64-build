@@ -11,9 +11,9 @@
  enabled cuda_nvcc         && { check_nvcc cuda_nvcc || die "ERROR: failed checking for nvcc."; }
  enabled chromaprint       && require chromaprint chromaprint.h chromaprint_get_version -lchromaprint
  enabled decklink          && { require_headers DeckLinkAPI.h &&
---- ./libavformat/avisynth.c	2021-04-28 18:20:05.000000000 +0200
-+++ ./libavformat/avisynth.c	2022-01-20 16:01:11.000000000 +0100
-@@ -30,19 +30,6 @@
+--- ./libavformat/avisynth.c	2022-02-19 18:20:03.000000000 +0100
++++ ./libavformat/avisynth.c	2022-02-23 10:21:27.000000000 +0100
+@@ -28,19 +28,6 @@
  #include "internal.h"
  #include "config.h"
  
@@ -33,7 +33,7 @@
  
  /* Endianness guards for audio */
  #if HAVE_BIGENDIAN
-@@ -53,37 +40,6 @@
+@@ -51,37 +38,6 @@
  
  #include <avisynth/avisynth_c.h>
  
@@ -71,7 +71,7 @@
  typedef struct AviSynthContext {
      AVS_ScriptEnvironment *env;
      AVS_Clip *clip;
-@@ -114,63 +70,6 @@ static const int avs_planes_yuva[4]   = { AVS_PLANAR_Y, AVS_PLANAR_U,
+@@ -112,63 +68,6 @@
  static const int avs_planes_rgba[4]   = { AVS_PLANAR_G, AVS_PLANAR_B,
                                            AVS_PLANAR_R, AVS_PLANAR_A };
  
@@ -135,7 +135,7 @@
  /* Note that avisynth_context_create and avisynth_context_destroy
   * do not allocate or free the actual context! That is taken care of
   * by libavformat. */
-@@ -179,67 +78,30 @@ static av_cold int avisynth_context_create(AVFormatContext *s)
+@@ -177,67 +76,30 @@
      AviSynthContext *avs = s->priv_data;
      int ret;
  
@@ -208,24 +208,12 @@
  /* Create AVStream from audio and video data. */
  static int avisynth_create_stream_video(AVFormatContext *s, AVStream *st)
  {
-@@ -505,12 +367,12 @@ static int avisynth_create_stream_video(AVFormatContext *s, AVStream *st)
-      * properties in earlier versions of interface version 8, only
-      * enable this if we detect version 8.1 at the minimum. */
+@@ -506,13 +368,13 @@
+      * version 9 at the minimum.  Technically, 8.1 works, but the time
+      * distance between 8.1 and 9 is very small, so just restrict it to 9. */
  
--    if (!avs_library.avs_get_env_property) {
-+    if (!avs_get_env_property) {
-         av_log(s, AV_LOG_TRACE, "%s\n",
-                "avs_get_env_property does not exist in AviSynth library; frame properties won't be checked.");
-         frameprop = false;
-     } else {
--        if (avs_library.avs_get_env_property(avs->env, AVS_AEP_INTERFACE_BUGFIX)) {
-+        if (avs_get_env_property(avs->env, AVS_AEP_INTERFACE_BUGFIX)) {
-             av_log(s, AV_LOG_TRACE, "%s\n", "Using interface version 8.1 or higher, reading frame properties.");
-             frameprop = true;
-         } else {
-@@ -521,11 +383,11 @@ static int avisynth_create_stream_video(AVFormatContext *s, AVStream *st)
- 
-     if (frameprop = true) {
+-    if (avs_library.avs_get_version(avs->clip) >= 9) {
++    if (avs_get_version(avs->clip) >= 9) {
  
 -        frame  = avs_library.avs_get_frame(avs->clip, framedata);
 -        avsmap = avs_library.avs_get_frame_props_ro(avs->env, frame);
@@ -238,7 +226,7 @@
          case 0:
              st->codecpar->field_order = AV_FIELD_PROGRESSIVE;
              break;
-@@ -540,7 +402,7 @@ static int avisynth_create_stream_video(AVFormatContext *s, AVStream *st)
+@@ -527,7 +389,7 @@
          }
  
          /* Color Range */
@@ -247,7 +235,7 @@
          case 0:
              st->codecpar->color_range = AVCOL_RANGE_JPEG;
              break;
-@@ -552,7 +414,7 @@ static int avisynth_create_stream_video(AVFormatContext *s, AVStream *st)
+@@ -539,7 +401,7 @@
          }
  
          /* Color Primaries */
@@ -256,7 +244,7 @@
          case 1:
              st->codecpar->color_primaries = AVCOL_PRI_BT709;
              break;
-@@ -594,7 +456,7 @@ static int avisynth_create_stream_video(AVFormatContext *s, AVStream *st)
+@@ -581,7 +443,7 @@
          }
  
          /* Color Transfer Characteristics */
@@ -265,7 +253,7 @@
          case 1:
              st->codecpar->color_trc = AVCOL_TRC_BT709;
              break;
-@@ -651,7 +513,7 @@ static int avisynth_create_stream_video(AVFormatContext *s, AVStream *st)
+@@ -638,7 +500,7 @@
          }
  
          /* Matrix coefficients */
@@ -274,7 +262,7 @@
          case 0:
              st->codecpar->color_space = AVCOL_SPC_RGB;
              break;
-@@ -699,7 +561,7 @@ static int avisynth_create_stream_video(AVFormatContext *s, AVStream *st)
+@@ -686,7 +548,7 @@
          }
  
          /* Chroma Location */
@@ -283,7 +271,7 @@
          case 0:
              st->codecpar->chroma_location = AVCHROMA_LOC_LEFT;
              break;
-@@ -822,7 +684,7 @@ static int avisynth_open_file(AVFormatContext *s)
+@@ -809,7 +671,7 @@
  #else
      arg = avs_new_value_string(s->url);
  #endif
@@ -292,7 +280,7 @@
      if (avs_is_error(val)) {
          av_log(s, AV_LOG_ERROR, "%s\n", avs_as_error(val));
          ret = AVERROR_UNKNOWN;
-@@ -834,14 +696,14 @@ static int avisynth_open_file(AVFormatContext *s)
+@@ -821,14 +683,14 @@
          goto fail;
      }
  
@@ -310,7 +298,7 @@
          av_log(s, AV_LOG_ERROR,
                 "AviSynth version is too old. Please upgrade to either AviSynth 2.6 >= RC1 or AviSynth+ >= r1718.\n");
          ret = AVERROR_UNKNOWN;
-@@ -849,7 +711,7 @@ static int avisynth_open_file(AVFormatContext *s)
+@@ -836,7 +698,7 @@
      }
  
      /* Release the AVS_Value as it will go out of scope. */
@@ -319,7 +307,7 @@
  
      if (ret = avisynth_create_stream(s))
          goto fail;
-@@ -897,7 +759,7 @@ static int avisynth_read_packet_video(AVFormatContext *s, AVPacket *pkt,
+@@ -884,7 +746,7 @@
      if (discard)
          return 0;
  
@@ -328,7 +316,7 @@
  
      /* Without the cast to int64_t, calculation overflows at about 9k x 9k
       * resolution. */
-@@ -914,8 +776,8 @@ static int avisynth_read_packet_video(AVFormatContext *s, AVPacket *pkt,
+@@ -901,8 +763,8 @@
      pkt->duration = 1;
      pkt->stream_index = avs->curr_stream;
  
@@ -339,7 +327,7 @@
      if (error) {
          av_log(s, AV_LOG_ERROR, "%s\n", error);
          avs->error = 1;
-@@ -926,26 +788,26 @@ static int avisynth_read_packet_video(AVFormatContext *s, AVPacket *pkt,
+@@ -913,26 +775,26 @@
      dst_p = pkt->data;
      for (i = 0; i < avs->n_planes; i++) {
          plane = avs->planes[i];
@@ -375,7 +363,7 @@
      return 0;
  }
  
-@@ -1005,8 +867,8 @@ static int avisynth_read_packet_audio(AVFormatContext *s, AVPacket *pkt,
+@@ -992,8 +854,8 @@
      pkt->duration = samples;
      pkt->stream_index = avs->curr_stream;
  
