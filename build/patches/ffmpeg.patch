@@ -11,8 +11,8 @@
  enabled cuda_nvcc         && { check_nvcc cuda_nvcc || die "ERROR: failed checking for nvcc."; }
  enabled chromaprint       && require chromaprint chromaprint.h chromaprint_get_version -lchromaprint
  enabled decklink          && { require_headers DeckLinkAPI.h &&
---- ./libavformat/avisynth.c	2022-02-19 18:20:03.000000000 +0100
-+++ ./libavformat/avisynth.c	2022-02-23 10:21:27.000000000 +0100
+--- libavformat/avisynth.c	2022-03-01 16:21:17.000000000 +0100
++++ libavformat/avisynth.c	2022-03-01 16:26:15.000000000 +0100
 @@ -28,19 +28,6 @@
  #include "internal.h"
  #include "config.h"
@@ -208,16 +208,16 @@
  /* Create AVStream from audio and video data. */
  static int avisynth_create_stream_video(AVFormatContext *s, AVStream *st)
  {
-@@ -506,13 +368,13 @@
+@@ -505,13 +367,13 @@
       * version 9 at the minimum.  Technically, 8.1 works, but the time
       * distance between 8.1 and 9 is very small, so just restrict it to 9. */
  
 -    if (avs_library.avs_get_version(avs->clip) >= 9) {
 +    if (avs_get_version(avs->clip) >= 9) {
  
--        frame  = avs_library.avs_get_frame(avs->clip, framedata);
+-        frame  = avs_library.avs_get_frame(avs->clip, 0);
 -        avsmap = avs_library.avs_get_frame_props_ro(avs->env, frame);
-+        frame  = avs_get_frame(avs->clip, framedata);
++        frame  = avs_get_frame(avs->clip, 0);
 +        avsmap = avs_get_frame_props_ro(avs->env, frame);
  
          /* Field order */
@@ -226,7 +226,7 @@
          case 0:
              st->codecpar->field_order = AV_FIELD_PROGRESSIVE;
              break;
-@@ -527,7 +389,7 @@
+@@ -526,7 +388,7 @@
          }
  
          /* Color Range */
@@ -235,7 +235,7 @@
          case 0:
              st->codecpar->color_range = AVCOL_RANGE_JPEG;
              break;
-@@ -539,7 +401,7 @@
+@@ -538,7 +400,7 @@
          }
  
          /* Color Primaries */
@@ -244,7 +244,7 @@
          case 1:
              st->codecpar->color_primaries = AVCOL_PRI_BT709;
              break;
-@@ -581,7 +443,7 @@
+@@ -580,7 +442,7 @@
          }
  
          /* Color Transfer Characteristics */
@@ -253,7 +253,7 @@
          case 1:
              st->codecpar->color_trc = AVCOL_TRC_BT709;
              break;
-@@ -638,7 +500,7 @@
+@@ -637,7 +499,7 @@
          }
  
          /* Matrix coefficients */
@@ -262,7 +262,7 @@
          case 0:
              st->codecpar->color_space = AVCOL_SPC_RGB;
              break;
-@@ -686,7 +548,7 @@
+@@ -685,7 +547,7 @@
          }
  
          /* Chroma Location */
@@ -271,7 +271,7 @@
          case 0:
              st->codecpar->chroma_location = AVCHROMA_LOC_LEFT;
              break;
-@@ -809,7 +671,7 @@
+@@ -808,7 +670,7 @@
  #else
      arg = avs_new_value_string(s->url);
  #endif
@@ -280,7 +280,7 @@
      if (avs_is_error(val)) {
          av_log(s, AV_LOG_ERROR, "%s\n", avs_as_error(val));
          ret = AVERROR_UNKNOWN;
-@@ -821,14 +683,14 @@
+@@ -820,14 +682,14 @@
          goto fail;
      }
  
@@ -298,7 +298,7 @@
          av_log(s, AV_LOG_ERROR,
                 "AviSynth version is too old. Please upgrade to either AviSynth 2.6 >= RC1 or AviSynth+ >= r1718.\n");
          ret = AVERROR_UNKNOWN;
-@@ -836,7 +698,7 @@
+@@ -835,7 +697,7 @@
      }
  
      /* Release the AVS_Value as it will go out of scope. */
@@ -307,7 +307,7 @@
  
      if (ret = avisynth_create_stream(s))
          goto fail;
-@@ -884,7 +746,7 @@
+@@ -883,7 +745,7 @@
      if (discard)
          return 0;
  
@@ -316,7 +316,7 @@
  
      /* Without the cast to int64_t, calculation overflows at about 9k x 9k
       * resolution. */
-@@ -901,8 +763,8 @@
+@@ -900,8 +762,8 @@
      pkt->duration = 1;
      pkt->stream_index = avs->curr_stream;
  
@@ -327,7 +327,7 @@
      if (error) {
          av_log(s, AV_LOG_ERROR, "%s\n", error);
          avs->error = 1;
-@@ -913,26 +775,26 @@
+@@ -912,26 +774,26 @@
      dst_p = pkt->data;
      for (i = 0; i < avs->n_planes; i++) {
          plane = avs->planes[i];
@@ -363,7 +363,7 @@
      return 0;
  }
  
-@@ -992,8 +854,8 @@
+@@ -991,8 +853,8 @@
      pkt->duration = samples;
      pkt->stream_index = avs->curr_stream;
  
