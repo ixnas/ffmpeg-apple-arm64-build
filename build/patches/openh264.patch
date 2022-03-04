@@ -1,0 +1,21 @@
+--- ./openh264.pc.in	2022-03-04 17:11:18.000000000 +0100
++++ ./openh264.pc.in	2022-03-04 17:20:13.000000000 +0100
+@@ -1,6 +1,6 @@
+ prefix=@prefix@
+ libdir=@libdir@
+-includedir=${prefix}/include/openh264
++includedir=${prefix}/include/wels
+ 
+ Name: OpenH264
+ Description: OpenH264 is a codec library which supports H.264 encoding and decoding. It is suitable for use in real time applications such as WebRTC.
+--- ./Makefile	2022-03-04 17:11:18.000000000 +0100
++++ ./Makefile	2022-03-04 17:20:49.000000000 +0100
+@@ -22,7 +22,7 @@
+ BUILDTYPE=Release
+ V=Yes
+ PREFIX=/usr/local
+-INCLUDE_PREFIX=$(PREFIX)/include/openh264
++INCLUDE_PREFIX=$(PREFIX)/include/wels
+ SHARED=-shared
+ OBJ=o
+ DESTDIR=

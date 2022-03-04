@@ -55,6 +55,10 @@ make_compile () {
   cd "$2/${SOFTWARE}/openh264/"
   checkStatus $? "change directory failed"
 
+  # compatibility patch until ffmpeg changes its include paths from wels to openh264.
+  patch -p1 < $1/patches/openh264.patch
+  checkStatus $? "patch of ${SOFTWARE} failed"
+
   # build
   make PREFIX="$3" -j $4
   checkStatus $? "build of ${SOFTWARE} failed"

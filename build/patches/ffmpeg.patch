@@ -11,8 +11,8 @@
  enabled cuda_nvcc         && { check_nvcc cuda_nvcc || die "ERROR: failed checking for nvcc."; }
  enabled chromaprint       && require chromaprint chromaprint.h chromaprint_get_version -lchromaprint
  enabled decklink          && { require_headers DeckLinkAPI.h &&
---- ./libavformat/avisynth.c	2022-03-01 16:21:17.000000000 +0100
-+++ ./libavformat/avisynth.c	2022-03-01 16:26:15.000000000 +0100
+--- ./libavformat/avisynth.c	2022-03-03 18:20:02.000000000 +0100
++++ ./libavformat/avisynth.c	2022-03-04 17:15:43.000000000 +0100
 @@ -28,19 +28,6 @@
  #include "internal.h"
  #include "config.h"
@@ -33,7 +33,7 @@
  
  /* Endianness guards for audio */
  #if HAVE_BIGENDIAN
-@@ -51,37 +38,6 @@
+@@ -51,38 +38,6 @@
  
  #include <avisynth/avisynth_c.h>
  
@@ -64,6 +64,7 @@
 -    AVSC_DECLARE_FUNC(avs_is_planar_rgba);
 -    AVSC_DECLARE_FUNC(avs_get_frame_props_ro);
 -    AVSC_DECLARE_FUNC(avs_prop_get_int);
+-    AVSC_DECLARE_FUNC(avs_prop_get_type);
 -    AVSC_DECLARE_FUNC(avs_get_env_property);
 -#undef AVSC_DECLARE_FUNC
 -} AviSynthLibrary;
@@ -71,7 +72,7 @@
  typedef struct AviSynthContext {
      AVS_ScriptEnvironment *env;
      AVS_Clip *clip;
-@@ -112,63 +68,6 @@
+@@ -113,64 +68,6 @@
  static const int avs_planes_rgba[4]   = { AVS_PLANAR_G, AVS_PLANAR_B,
                                            AVS_PLANAR_R, AVS_PLANAR_A };
  
@@ -121,6 +122,7 @@
 -    LOAD_AVS_FUNC(avs_is_planar_rgba, 1);
 -    LOAD_AVS_FUNC(avs_get_frame_props_ro, 1);
 -    LOAD_AVS_FUNC(avs_prop_get_int, 1);
+-    LOAD_AVS_FUNC(avs_prop_get_type, 1);
 -    LOAD_AVS_FUNC(avs_get_env_property, 1);
 -#undef LOAD_AVS_FUNC
 -
@@ -135,7 +137,7 @@
  /* Note that avisynth_context_create and avisynth_context_destroy
   * do not allocate or free the actual context! That is taken care of
   * by libavformat. */
-@@ -177,67 +76,30 @@
+@@ -179,67 +76,30 @@
      AviSynthContext *avs = s->priv_data;
      int ret;
  
@@ -208,7 +210,7 @@
  /* Create AVStream from audio and video data. */
  static int avisynth_create_stream_video(AVFormatContext *s, AVStream *st)
  {
-@@ -505,13 +367,13 @@
+@@ -507,16 +367,16 @@
       * version 9 at the minimum.  Technically, 8.1 works, but the time
       * distance between 8.1 and 9 is very small, so just restrict it to 9. */
  
@@ -221,21 +223,29 @@
 +        avsmap = avs_get_frame_props_ro(avs->env, frame);
  
          /* Field order */
--        switch (avs_library.avs_prop_get_int(avs->env, avsmap, "_FieldBased", 0, &error)) {
-+        switch (avs_prop_get_int(avs->env, avsmap, "_FieldBased", 0, &error)) {
-         case 0:
-             st->codecpar->field_order = AV_FIELD_PROGRESSIVE;
-             break;
-@@ -526,7 +388,7 @@
+-        if(avs_library.avs_prop_get_type(avs->env, avsmap, "_FieldBased") == AVS_PROPTYPE_UNSET) {
++        if(avs_prop_get_type(avs->env, avsmap, "_FieldBased") == AVS_PROPTYPE_UNSET) {
+             st->codecpar->field_order = AV_FIELD_UNKNOWN;
+         } else {
+-            switch (avs_library.avs_prop_get_int(avs->env, avsmap, "_FieldBased", 0, &error)) {
++            switch (avs_prop_get_int(avs->env, avsmap, "_FieldBased", 0, &error)) {
+             case 0:
+                 st->codecpar->field_order = AV_FIELD_PROGRESSIVE;
+                 break;
+@@ -532,10 +392,10 @@
          }
  
          /* Color Range */
--        switch (avs_library.avs_prop_get_int(avs->env, avsmap, "_ColorRange", 0, &error)) {
-+        switch (avs_prop_get_int(avs->env, avsmap, "_ColorRange", 0, &error)) {
-         case 0:
-             st->codecpar->color_range = AVCOL_RANGE_JPEG;
-             break;
-@@ -538,7 +400,7 @@
+-        if(avs_library.avs_prop_get_type(avs->env, avsmap, "_ColorRange") == AVS_PROPTYPE_UNSET) {
++        if(avs_prop_get_type(avs->env, avsmap, "_ColorRange") == AVS_PROPTYPE_UNSET) {
+             st->codecpar->color_range = AVCOL_RANGE_UNSPECIFIED;
+         } else {
+-            switch (avs_library.avs_prop_get_int(avs->env, avsmap, "_ColorRange", 0, &error)) {
++            switch (avs_prop_get_int(avs->env, avsmap, "_ColorRange", 0, &error)) {
+             case 0:
+                 st->codecpar->color_range = AVCOL_RANGE_JPEG;
+                 break;
+@@ -548,7 +408,7 @@
          }
  
          /* Color Primaries */
@@ -244,7 +254,7 @@
          case 1:
              st->codecpar->color_primaries = AVCOL_PRI_BT709;
              break;
-@@ -580,7 +442,7 @@
+@@ -590,7 +450,7 @@
          }
  
          /* Color Transfer Characteristics */
@@ -253,25 +263,33 @@
          case 1:
              st->codecpar->color_trc = AVCOL_TRC_BT709;
              break;
-@@ -637,7 +499,7 @@
+@@ -647,10 +507,10 @@
          }
  
          /* Matrix coefficients */
--        switch (avs_library.avs_prop_get_int(avs->env, avsmap, "_Matrix", 0, &error)) {
-+        switch (avs_prop_get_int(avs->env, avsmap, "_Matrix", 0, &error)) {
-         case 0:
-             st->codecpar->color_space = AVCOL_SPC_RGB;
-             break;
-@@ -685,7 +547,7 @@
+-        if(avs_library.avs_prop_get_type(avs->env, avsmap, "_Matrix") == AVS_PROPTYPE_UNSET) {
++        if(avs_prop_get_type(avs->env, avsmap, "_Matrix") == AVS_PROPTYPE_UNSET) {
+             st->codecpar->color_space = AVCOL_SPC_UNSPECIFIED;
+         } else {
+-            switch (avs_library.avs_prop_get_int(avs->env, avsmap, "_Matrix", 0, &error)) {
++            switch (avs_prop_get_int(avs->env, avsmap, "_Matrix", 0, &error)) {
+             case 0:
+                 st->codecpar->color_space = AVCOL_SPC_RGB;
+                 break;
+@@ -699,10 +559,10 @@
          }
  
          /* Chroma Location */
--        switch (avs_library.avs_prop_get_int(avs->env, avsmap, "_ChromaLocation", 0, &error)) {
-+        switch (avs_prop_get_int(avs->env, avsmap, "_ChromaLocation", 0, &error)) {
-         case 0:
-             st->codecpar->chroma_location = AVCHROMA_LOC_LEFT;
-             break;
-@@ -808,7 +670,7 @@
+-        if(avs_library.avs_prop_get_type(avs->env, avsmap, "_ChromaLocation") == AVS_PROPTYPE_UNSET) {
++        if(avs_prop_get_type(avs->env, avsmap, "_ChromaLocation") == AVS_PROPTYPE_UNSET) {
+             st->codecpar->chroma_location = AVCHROMA_LOC_UNSPECIFIED;
+         } else {
+-            switch (avs_library.avs_prop_get_int(avs->env, avsmap, "_ChromaLocation", 0, &error)) {
++            switch (avs_prop_get_int(avs->env, avsmap, "_ChromaLocation", 0, &error)) {
+             case 0:
+                 st->codecpar->chroma_location = AVCHROMA_LOC_LEFT;
+                 break;
+@@ -826,7 +686,7 @@
  #else
      arg = avs_new_value_string(s->url);
  #endif
@@ -280,7 +298,7 @@
      if (avs_is_error(val)) {
          av_log(s, AV_LOG_ERROR, "%s\n", avs_as_error(val));
          ret = AVERROR_UNKNOWN;
-@@ -820,14 +682,14 @@
+@@ -838,14 +698,14 @@
          goto fail;
      }
  
@@ -298,7 +316,7 @@
          av_log(s, AV_LOG_ERROR,
                 "AviSynth version is too old. Please upgrade to either AviSynth 2.6 >= RC1 or AviSynth+ >= r1718.\n");
          ret = AVERROR_UNKNOWN;
-@@ -835,7 +697,7 @@
+@@ -853,7 +713,7 @@
      }
  
      /* Release the AVS_Value as it will go out of scope. */
@@ -307,7 +325,7 @@
  
      if (ret = avisynth_create_stream(s))
          goto fail;
-@@ -883,7 +745,7 @@
+@@ -901,7 +761,7 @@
      if (discard)
          return 0;
  
@@ -316,7 +334,7 @@
  
      /* Without the cast to int64_t, calculation overflows at about 9k x 9k
       * resolution. */
-@@ -900,8 +762,8 @@
+@@ -918,8 +778,8 @@
      pkt->duration = 1;
      pkt->stream_index = avs->curr_stream;
  
@@ -327,7 +345,7 @@
      if (error) {
          av_log(s, AV_LOG_ERROR, "%s\n", error);
          avs->error = 1;
-@@ -912,26 +774,26 @@
+@@ -930,26 +790,26 @@
      dst_p = pkt->data;
      for (i = 0; i < avs->n_planes; i++) {
          plane = avs->planes[i];
@@ -363,7 +381,7 @@
      return 0;
  }
  
-@@ -991,8 +853,8 @@
+@@ -1009,8 +869,8 @@
      pkt->duration = samples;
      pkt->stream_index = avs->curr_stream;
  
