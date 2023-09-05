@@ -167,12 +167,6 @@ checkStatus $? "build aom"
 echoDurationInSections $START_TIME
 
 START_TIME=$(currentTimeInSeconds)
-echoSection "compile openh264"
-$SCRIPT_DIR/build-openh264.sh "$SCRIPT_DIR" "$WORKING_DIR" "$TOOL_DIR" "$CPUS" > "$WORKING_DIR/build-openh264.log" 2>&1
-checkStatus $? "build openh264"
-echoDurationInSections $START_TIME
-
-START_TIME=$(currentTimeInSeconds)
 echoSection "compile x264"
 $SCRIPT_DIR/build-x264.sh "$SCRIPT_DIR" "$WORKING_DIR" "$TOOL_DIR" "$CPUS" > "$WORKING_DIR/build-x264.log" 2>&1
 checkStatus $? "build x264"
@@ -206,12 +200,6 @@ START_TIME=$(currentTimeInSeconds)
 echoSection "compile openjpeg"
 $SCRIPT_DIR/build-openjpeg.sh "$SCRIPT_DIR" "$WORKING_DIR" "$TOOL_DIR" "$CPUS" > "$WORKING_DIR/build-openjpeg.log" 2>&1
 checkStatus $? "build openjpeg"
-echoDurationInSections $START_TIME
-
-START_TIME=$(currentTimeInSeconds)
-echoSection "compile avisynth+"
-$SCRIPT_DIR/build-avisynthplus.sh "$SCRIPT_DIR" "$WORKING_DIR" "$TOOL_DIR" "$CPUS" > "$WORKING_DIR/build-avisynthplus.log" 2>&1
-checkStatus $? "build avisynthplus"
 echoDurationInSections $START_TIME
 
 START_TIME=$(currentTimeInSeconds)

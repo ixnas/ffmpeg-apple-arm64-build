@@ -16,18 +16,29 @@
  
  configure_file("${CMAKE_CURRENT_SOURCE_DIR}/cmake/cmake_uninstall.cmake.in"
                 "${CMAKE_CURRENT_BINARY_DIR}/cmake/cmake_uninstall.cmake"
---- ./source/common/aarch64/asm-primitives.cpp	2021-10-31 15:41:00.000000000 +0000
-+++ ./source/common/aarch64/asm-primitives.cpp	2021-10-31 15:42:43.000000000 +0000
-@@ -109,10 +109,10 @@
- {
-     if (cpuMask & X265_CPU_NEON)
-     {
--    	  // quant
-+#if !HIGH_BIT_DEPTH
-+    	// quant
-         p.quant = PFX(quant_neon);
-         
--#if !HIGH_BIT_DEPTH
-         p.pu[LUMA_4x8].satd   = PFX(pixel_satd_4x8_neon);
-         p.pu[LUMA_4x16].satd  = PFX(pixel_satd_4x16_neon);
- 
+
+--- ./source/common/aarch64/asm.S
++++ ./source/common/aarch64/asm.S
+@@ -28,6 +28,11 @@
+ #define PFX2(prefix, name) PFX3(prefix, name)
+ #define PFX(name)          PFX2(X265_NS, name)
+
++
++#define UPFX3(prefix, name) _ ## prefix ## _ ## name
++#define UPFX2(prefix, name) UPFX3(prefix, name)
++#define UPFX(name)          UPFX2(X265_NS, name)
++
+ #ifdef __APPLE__
+ #define PREFIX 1
+ #endif
+--- ./source/common/aarch64/pixel-util.S
++++ ./source/common/aarch64/pixel-util.S
+@@ -2407,7 +2407,7 @@ function PFX(costCoeffNxN_neon)
+     // x5 - scanFlagMask
+     // x6 - baseCtx
+     mov             x0, #0
+-    movrel          x1, x265_entropyStateBits
++    movrel          x1, UPFX(entropyStateBits)
+     mov             x4, #0
+     mov             x11, #0
+     movi            v31.16b, #0

@@ -43,9 +43,6 @@ configure_build () {
   cd "$2/${SOFTWARE}/ffmpeg/"
   checkStatus $? "change directory failed"
 
-  patch -p1 < $1/patches/ffmpeg.patch
-  checkStatus $? "patch failed"
-
   # prepare build
   FF_FLAGS="-L${3}/lib -I${3}/include"
   export LDFLAGS="$FF_FLAGS"
@@ -53,11 +50,11 @@ configure_build () {
   
   # --pkg-config-flags="--static" is required to respect the Libs.private flags of the *.pc files
   ./configure --prefix="$4" --enable-gpl --pkg-config-flags="--static"   --pkg-config=$3/bin/pkg-config \
-      --enable-libaom --enable-libopenh264 --enable-libx264 --enable-libx265 --enable-libvpx \
+      --enable-libaom --enable-libx264 --enable-libx265 --enable-libvpx \
       --enable-libmp3lame --enable-libopus --enable-neon --enable-runtime-cpudetect \
       --enable-audiotoolbox --enable-videotoolbox --enable-libvorbis --enable-libsvtav1 \
       --enable-libass --enable-lto --enable-opencl --enable-libsoxr --enable-libopenjpeg \
-      --enable-avisynth --enable-libxvid
+      --enable-libxvid
 
   checkStatus $? "configuration of ${SOFTWARE} failed"
 
