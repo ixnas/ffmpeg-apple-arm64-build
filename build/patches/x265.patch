@@ -17,28 +17,3 @@
  configure_file("${CMAKE_CURRENT_SOURCE_DIR}/cmake/cmake_uninstall.cmake.in"
                 "${CMAKE_CURRENT_BINARY_DIR}/cmake/cmake_uninstall.cmake"
 
---- ./source/common/aarch64/asm.S
-+++ ./source/common/aarch64/asm.S
-@@ -28,6 +28,11 @@
- #define PFX2(prefix, name) PFX3(prefix, name)
- #define PFX(name)          PFX2(X265_NS, name)
-
-+
-+#define UPFX3(prefix, name) _ ## prefix ## _ ## name
-+#define UPFX2(prefix, name) UPFX3(prefix, name)
-+#define UPFX(name)          UPFX2(X265_NS, name)
-+
- #ifdef __APPLE__
- #define PREFIX 1
- #endif
---- ./source/common/aarch64/pixel-util.S
-+++ ./source/common/aarch64/pixel-util.S
-@@ -2407,7 +2407,7 @@ function PFX(costCoeffNxN_neon)
-     // x5 - scanFlagMask
-     // x6 - baseCtx
-     mov             x0, #0
--    movrel          x1, x265_entropyStateBits
-+    movrel          x1, UPFX(entropyStateBits)
-     mov             x4, #0
-     mov             x11, #0
-     movi            v31.16b, #0

@@ -42,20 +42,6 @@ $4/bin/ffmpeg -y -i "$2/test.mp4" -c:v "libsvtav1" -an "$3/test-svt-av1.mp4" > "
 checkStatus $? "test svt av1"
 echoDurationInSections $START_TIME
 
-# test aom av1
-START_TIME=$(currentTimeInSeconds)
-echoSection "run test aom av1 encoding"
-$4/bin/ffmpeg -y -i "$2/test.mp4" -c:v "libaom-av1" -cpu-used 6 -row-mt 1 -an "$3/test-aom-av1.mp4" > "$3/test-aom-av1.log" 2>&1
-checkStatus $? "test aom av1"
-echoDurationInSections $START_TIME
-
-# test openh264
-START_TIME=$(currentTimeInSeconds)
-echoSection "run test openh264 encoding"
-$4/bin/ffmpeg -y -i "$2/test.mp4" -c:v "libopenh264" -an "$3/test-openh264.mp4" > "$3/test-openh264.log" 2>&1
-checkStatus $? "test openh264"
-echoDurationInSections $START_TIME
-
 # test x264
 START_TIME=$(currentTimeInSeconds)
 echoSection "run test x264 encoding"

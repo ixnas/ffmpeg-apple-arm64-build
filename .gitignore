@@ -45,9 +45,11 @@
 /libpng/
 /ogg/
 /openh264/
+/openjpeg/
 /opus/
 /out/
 /pkg-config/
+/soxr/
 /svt-av1/
 /test-aom-av1.log
 /test-aom-av1.mp4

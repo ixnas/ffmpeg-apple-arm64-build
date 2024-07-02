@@ -161,12 +161,6 @@ checkStatus $? "build vorbis"
 echoDurationInSections $START_TIME
 
 START_TIME=$(currentTimeInSeconds)
-echoSection "compile aom"
-$SCRIPT_DIR/build-aom.sh "$SCRIPT_DIR" "$WORKING_DIR" "$TOOL_DIR" "$CPUS" "xxxx" > "$WORKING_DIR/build-aom.log" 2>&1
-checkStatus $? "build aom"
-echoDurationInSections $START_TIME
-
-START_TIME=$(currentTimeInSeconds)
 echoSection "compile x264"
 $SCRIPT_DIR/build-x264.sh "$SCRIPT_DIR" "$WORKING_DIR" "$TOOL_DIR" "$CPUS" > "$WORKING_DIR/build-x264.log" 2>&1
 checkStatus $? "build x264"

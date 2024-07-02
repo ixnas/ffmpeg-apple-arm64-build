@@ -1,9 +1,0 @@
---- ./tool/lib/pkgconfig/avisynth.pc	2022-01-20 16:16:06.000000000 +0100
-+++ ./tool/lib/pkgconfig/avisynth.pc	2022-01-20 16:16:07.000000000 +0100
-@@ -8,5 +8,5 @@
- Version: 3.7.1
- 
- Libs: -L${libdir} -lavisynth
--Libs.private: -L${libdir} -lpthread -ldl
-+Libs.private: -L${libdir} -lpthread -ldl -lstdc++ -lm
- Cflags: -I${includedir}
