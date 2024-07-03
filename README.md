@@ -13,7 +13,6 @@ This repository builds FFmpeg and FFprobe for Mac OSX using
   - [pkg-config](https://www.freedesktop.org/wiki/Software/pkg-config/)
 - video codecs
   - [SVT-AV1](https://github.com/AOMediaCodec/SVT-AV1) for AV1 de-/encoding
-  - [aom](https://aomedia.org/) for AV1 de-/encoding
   - [x264](http://www.videolan.org/developers/x264.html) for H.264 encoding
   - [x265](http://x265.org/) for H.265/HEVC encoding
   - [vpx](https://www.webmproject.org/) for VP8/VP9 de-/encoding
